@@ -1,0 +1,165 @@
+<%- include('layout/header') %>
+<%- include('layout/sidebar') %>
+
+<!-- Reports Section Layout -->
+<div class="reports-container">
+  
+  <!-- Telemetry Overview Grid -->
+  <div class="console-box section-box">
+    <div class="console-header">
+      <h3 class="console-title"><i class="fa-solid fa-calculator"></i> Network Telemetry Analytical Summary</h3>
+    </div>
+    <div class="console-body">
+      <div class="reports-summary-cards">
+        <div class="report-stat-card">
+          <h4>Total Records Captured</h4>
+          <p class="mono text-glow"><%= telemetryStats.overview.total_logs %></p>
+          <span>Telemetry Logs</span>
+        </div>
+        
+        <div class="report-stat-card">
+          <h4>Average Signal Level</h4>
+          <p class="mono <%= telemetryStats.overview.avg_signal >= -70 ? 'text-green' : (telemetryStats.overview.avg_signal >= -85 ? 'text-blue' : 'text-danger') %>">
+            <%= telemetryStats.overview.avg_signal !== 'N/A' && telemetryStats.overview.avg_signal !== 0 ? telemetryStats.overview.avg_signal + ' dBm' : 'N/A' %>
+          </p>
+          <span>Link Attenuation Avg</span>
+        </div>
+        
+        <div class="report-stat-card">
+          <h4>Peak Signal Level</h4>
+          <p class="mono text-green">
+            <%= telemetryStats.overview.max_signal !== 'N/A' && telemetryStats.overview.max_signal !== 0 ? telemetryStats.overview.max_signal + ' dBm' : 'N/A' %>
+          </p>
+          <span>Maximum Registered Link</span>
+        </div>
+        
+        <div class="report-stat-card">
+          <h4>Weakest Signal Level</h4>
+          <p class="mono text-danger">
+            <%= telemetryStats.overview.min_signal !== 'N/A' && telemetryStats.overview.min_signal !== 0 ? telemetryStats.overview.min_signal + ' dBm' : 'N/A' %>
+          </p>
+          <span>Minimum Carrier Threshold</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reports-two-columns">
+    <!-- Left Column: Satellites & Stations breakdowns -->
+    <div class="reports-col col-6">
+      <!-- Satellites Orbit Distribution -->
+      <div class="console-box">
+        <div class="console-header">
+          <h3 class="console-title"><i class="fa-solid fa-globe"></i> Satellite Orbit Allocations</h3>
+        </div>
+        <div class="console-body">
+          <% if (satelliteStats.orbitBreakdown.length === 0) { %>
+            <p class="empty-text">No satellites logged.</p>
+          <% } else { %>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Orbit Configuration Zone</th>
+                  <th class="text-right">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% satelliteStats.orbitBreakdown.forEach(row => { %>
+                  <tr>
+                    <td><%= row.orbit_type %></td>
+                    <td class="text-right mono text-glow font-bold"><%= row.count %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Satellites & Stations Status Breakdowns -->
+      <div class="console-box mt-4">
+        <div class="console-header">
+          <h3 class="console-title"><i class="fa-solid fa-list-check"></i> Network Status Distributions</h3>
+        </div>
+        <div class="console-body status-reports-split">
+          
+          <div class="status-col">
+            <h5>Satellites</h5>
+            <% if (satelliteStats.statusBreakdown.length === 0) { %>
+              <p class="empty-text">No data.</p>
+            <% } else { %>
+              <ul class="report-status-list">
+                <% satelliteStats.statusBreakdown.forEach(row => { %>
+                  <li>
+                    <span class="status-indicator status-<%= row.status.toLowerCase() %>"><%= row.status %></span>
+                    <span class="mono"><%= row.count %></span>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } %>
+          </div>
+
+          <div class="status-col">
+            <h5>Ground Stations</h5>
+            <% if (stationStats.statusBreakdown.length === 0) { %>
+              <p class="empty-text">No data.</p>
+            <% } else { %>
+              <ul class="report-status-list">
+                <% stationStats.statusBreakdown.forEach(row => { %>
+                  <li>
+                    <span class="status-indicator status-<%= row.status.toLowerCase() %>"><%= row.status %></span>
+                    <span class="mono"><%= row.count %></span>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } %>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Satellite Telemetry Rankings -->
+    <div class="reports-col col-6">
+      <div class="console-box">
+        <div class="console-header">
+          <h3 class="console-title"><i class="fa-solid fa-ranking-star"></i> Signal Strength Index by Spacecraft</h3>
+        </div>
+        <div class="console-body">
+          <% if (telemetryStats.bySatellite.length === 0) { %>
+            <p class="empty-text">No signal telemetry recorded.</p>
+          <% } else { %>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Spacecraft Designation</th>
+                  <th>Status</th>
+                  <th class="text-center">Logs</th>
+                  <th class="text-right">Avg Signal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% telemetryStats.bySatellite.forEach(row => { %>
+                  <tr>
+                    <td class="text-glow font-bold"><%= row.satellite_name %></td>
+                    <td>
+                      <span class="status-indicator status-<%= row.satellite_status.toLowerCase() %>">
+                        <%= row.satellite_status %>
+                      </span>
+                    </td>
+                    <td class="text-center mono"><%= row.logs_count %></td>
+                    <td class="text-right mono font-bold <%= row.avg_signal >= -70 ? 'text-green' : (row.avg_signal >= -85 ? 'text-blue' : (row.avg_signal === 'N/A' ? 'text-muted' : 'text-danger')) %>">
+                      <%= row.avg_signal !== 'N/A' ? row.avg_signal + ' dBm' : 'No Data' %>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('layout/footer') %>

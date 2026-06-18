@@ -1,0 +1,98 @@
+<%- include('../layout/header') %>
+<%- include('../layout/sidebar') %>
+
+<div class="console-box">
+  <div class="console-header">
+    <h3 class="console-title"><i class="fa-solid fa-tower-broadcast"></i> Ground Stations Registry</h3>
+    
+    <% if (user.role === 'Admin' || user.role === 'Manager') { %>
+      <a href="/stations/create" class="btn-primary">
+        <i class="fa-solid fa-plus"></i> Add Ground Site
+      </a>
+    <% } %>
+  </div>
+
+  <div class="console-body">
+    <!-- Notifications/Alerts -->
+    <% if (success) { %>
+      <div class="alert alert-success" id="successAlert">
+        <i class="fa-solid fa-circle-check"></i>
+        <span><%= success %></span>
+        <button class="alert-close" onclick="document.getElementById('successAlert').remove()">&times;</button>
+      </div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-danger" id="errorAlert">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span><%= error %></span>
+        <button class="alert-close" onclick="document.getElementById('errorAlert').remove()">&times;</button>
+      </div>
+    <% } %>
+
+    <!-- Search Tool -->
+    <div class="table-tools">
+      <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="stationSearch" placeholder="Filter ground stations by name, location, status..." onkeyup="searchTable('stationSearch', 'stationTable')">
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <% if (stations.length === 0) { %>
+      <div class="empty-state">
+        <i class="fa-solid fa-tower-broadcast fa-3x"></i>
+        <p>No ground station sites registered in the network logs.</p>
+        <% if (user.role === 'Admin' || user.role === 'Manager') { %>
+          <a href="/stations/create" class="btn-primary btn-sm">Add First Site</a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="data-table" id="stationTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Station Name</th>
+              <th>Geographic Location</th>
+              <th>Status</th>
+              <% if (user.role === 'Admin' || user.role === 'Manager') { %>
+                <th class="actions-col">Operations</th>
+              <% } %>
+            </tr>
+          </thead>
+          <tbody>
+            <% stations.forEach(station => { %>
+              <tr>
+                <td class="mono"><%= station.id %></td>
+                <td class="text-glow"><%= station.station_name %></td>
+                <td><%= station.location %></td>
+                <td>
+                  <span class="status-indicator status-<%= station.status.toLowerCase() %>">
+                    <%= station.status %>
+                  </span>
+                </td>
+                <% if (user.role === 'Admin' || user.role === 'Manager') { %>
+                  <td>
+                    <div class="action-buttons">
+                      <a href="/stations/edit/<%= station.id %>" class="btn-action-edit" title="Modify Station">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                      </a>
+                      
+                      <form action="/stations/delete/<%= station.id %>" method="POST" onsubmit="return confirm('Are you sure you want to decommission and remove <%= station.station_name %> from the tracking network?');" style="display:inline;">
+                        <button type="submit" class="btn-action-delete" title="Purge Record">
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                <% } %>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../layout/footer') %>

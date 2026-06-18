@@ -1,0 +1,100 @@
+<%- include('../layout/header') %>
+<%- include('../layout/sidebar') %>
+
+<div class="console-box">
+  <div class="console-header">
+    <h3 class="console-title"><i class="fa-solid fa-satellite"></i> Satellite Registry</h3>
+    
+    <% if (user.role === 'Admin' || user.role === 'Manager') { %>
+      <a href="/satellites/create" class="btn-primary">
+        <i class="fa-solid fa-plus"></i> Register Satellite
+      </a>
+    <% } %>
+  </div>
+
+  <div class="console-body">
+    <!-- Notifications/Alerts -->
+    <% if (success) { %>
+      <div class="alert alert-success" id="successAlert">
+        <i class="fa-solid fa-circle-check"></i>
+        <span><%= success %></span>
+        <button class="alert-close" onclick="document.getElementById('successAlert').remove()">&times;</button>
+      </div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-danger" id="errorAlert">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span><%= error %></span>
+        <button class="alert-close" onclick="document.getElementById('errorAlert').remove()">&times;</button>
+      </div>
+    <% } %>
+
+    <!-- Search Tool -->
+    <div class="table-tools">
+      <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="satelliteSearch" placeholder="Filter satellites by name, orbit type, status..." onkeyup="searchTable('satelliteSearch', 'satelliteTable')">
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <% if (satellites.length === 0) { %>
+      <div class="empty-state">
+        <i class="fa-solid fa-satellite fa-3x"></i>
+        <p>No orbital satellites currently registered in the tracking logs.</p>
+        <% if (user.role === 'Admin' || user.role === 'Manager') { %>
+          <a href="/satellites/create" class="btn-primary btn-sm">Register First Satellite</a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="data-table" id="satelliteTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Satellite Name</th>
+              <th>Orbit Configuration</th>
+              <th>Launch Date</th>
+              <th>Status</th>
+              <% if (user.role === 'Admin' || user.role === 'Manager') { %>
+                <th class="actions-col">Operations</th>
+              <% } %>
+            </tr>
+          </thead>
+          <tbody>
+            <% satellites.forEach(sat => { %>
+              <tr>
+                <td class="mono"><%= sat.id %></td>
+                <td class="text-glow"><%= sat.satellite_name %></td>
+                <td><%= sat.orbit_type %></td>
+                <td class="mono"><%= new Date(sat.launch_date).toLocaleDateString() %></td>
+                <td>
+                  <span class="status-indicator status-<%= sat.status.toLowerCase() %>">
+                    <%= sat.status %>
+                  </span>
+                </td>
+                <% if (user.role === 'Admin' || user.role === 'Manager') { %>
+                  <td>
+                    <div class="action-buttons">
+                      <a href="/satellites/edit/<%= sat.id %>" class="btn-action-edit" title="Modify Registry">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                      </a>
+                      
+                      <form action="/satellites/delete/<%= sat.id %>" method="POST" onsubmit="return confirm('Are you sure you want to decommission and delete <%= sat.satellite_name %> from active tracking? This will purge all associated telemetry logs.');" style="display:inline;">
+                        <button type="submit" class="btn-action-delete" title="Purge Record">
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                <% } %>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../layout/footer') %>

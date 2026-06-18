@@ -1,0 +1,106 @@
+<%- include('../layout/header') %>
+<%- include('../layout/sidebar') %>
+
+<div class="console-box">
+  <div class="console-header">
+    <h3 class="console-title"><i class="fa-solid fa-wave-square"></i> Telemetry Logs Database</h3>
+    <a href="/telemetry/create" class="btn-primary">
+      <i class="fa-solid fa-plus"></i> Record Telemetry
+    </a>
+  </div>
+
+  <div class="console-body">
+    <!-- Notifications/Alerts -->
+    <% if (success) { %>
+      <div class="alert alert-success" id="successAlert">
+        <i class="fa-solid fa-circle-check"></i>
+        <span><%= success %></span>
+        <button class="alert-close" onclick="document.getElementById('successAlert').remove()">&times;</button>
+      </div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-danger" id="errorAlert">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span><%= error %></span>
+        <button class="alert-close" onclick="document.getElementById('errorAlert').remove()">&times;</button>
+      </div>
+    <% } %>
+
+    <!-- Search Tool -->
+    <div class="table-tools">
+      <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="telemetrySearch" placeholder="Filter logs by satellite name, signal strength, notes..." onkeyup="searchTable('telemetrySearch', 'telemetryTable')">
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <% if (logs.length === 0) { %>
+      <div class="empty-state">
+        <i class="fa-solid fa-microchip fa-3x"></i>
+        <p>No telemetry logs recorded yet. Signal interface is idle.</p>
+        <a href="/telemetry/create" class="btn-primary btn-sm">Record First Telemetry Log</a>
+      </div>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="data-table" id="telemetryTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Satellite Name</th>
+              <th>Signal Strength</th>
+              <th>Link Quality</th>
+              <th>Log Timestamp</th>
+              <th>Operational Notes</th>
+              <th class="actions-col">Operations</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% logs.forEach(log => { %>
+              <tr>
+                <td class="mono"><%= log.id %></td>
+                <td class="text-glow"><%= log.satellite_name %></td>
+                <td class="mono font-bold">
+                  <%= log.signal_strength %> dBm
+                </td>
+                <td>
+                  <% 
+                    let qClass = 'sig-poor';
+                    let qText = 'Critical / Weak';
+                    if (log.signal_strength >= -70) {
+                      qClass = 'sig-good';
+                      qText = 'Nominal / Strong';
+                    } else if (log.signal_strength >= -85) {
+                      qClass = 'sig-fair';
+                      qText = 'Fair / Attenuated';
+                    }
+                  %>
+                  <span class="signal-indicator <%= qClass %>">
+                    <%= qText %>
+                  </span>
+                </td>
+                <td class="mono"><%= new Date(log.timestamp).toLocaleString() %></td>
+                <td class="notes-preview"><%= log.notes || 'No log details.' %></td>
+                <td>
+                  <div class="action-buttons">
+                    <a href="/telemetry/edit/<%= log.id %>" class="btn-action-edit" title="Modify Log">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                    
+                    <form action="/telemetry/delete/<%= log.id %>" method="POST" onsubmit="return confirm('Purge this telemetry log record from the database permanently?');" style="display:inline;">
+                      <button type="submit" class="btn-action-delete" title="Purge Record">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../layout/footer') %>

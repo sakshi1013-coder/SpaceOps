@@ -1,0 +1,73 @@
+<%- include('../layout/header') %>
+<%- include('../layout/sidebar') %>
+
+<div class="form-container">
+  <div class="console-box form-card">
+    <div class="card-glow"></div>
+    <div class="console-header">
+      <h3 class="console-title">
+        <i class="fa-solid <%= isEdit ? 'fa-pen-to-square' : 'fa-plus' %>"></i>
+        <%= isEdit ? `Modify Satellite Configuration: ${satellite.satellite_name}` : 'Register New Satellite' %>
+      </h3>
+      <a href="/satellites" class="btn-secondary btn-sm">
+        <i class="fa-solid fa-arrow-left"></i> Cancel
+      </a>
+    </div>
+
+    <div class="console-body">
+      <% if (error) { %>
+        <div class="alert alert-danger" id="formAlert">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span><%= error %></span>
+          <button class="alert-close" onclick="document.getElementById('formAlert').remove()">&times;</button>
+        </div>
+      <% } %>
+
+      <form action="<%= isEdit ? `/satellites/edit/${satellite.id}` : '/satellites/create' %>" method="POST" id="satelliteForm" class="system-form">
+        
+        <div class="form-group">
+          <label for="satellite_name"><i class="fa-solid fa-signature"></i> Satellite Identity / Name</label>
+          <input type="text" id="satellite_name" name="satellite_name" value="<%= satellite.satellite_name || '' %>" placeholder="e.g. Orion-V, Kepler-12C" required maxlength="100">
+          <small class="form-help">Enter a unique call-sign or official designation for the satellite.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="orbit_type"><i class="fa-solid fa-circle-notch animate-spin-slow"></i> Orbit Configuration Type</label>
+          <select id="orbit_type" name="orbit_type" required>
+            <option value="" disabled <%= !satellite.orbit_type ? 'selected' : '' %>>Select Orbit Configuration...</option>
+            <option value="LEO (Low Earth Orbit)" <%= satellite.orbit_type === 'LEO (Low Earth Orbit)' ? 'selected' : '' %>>LEO (Low Earth Orbit)</option>
+            <option value="MEO (Medium Earth Orbit)" <%= satellite.orbit_type === 'MEO (Medium Earth Orbit)' ? 'selected' : '' %>>MEO (Medium Earth Orbit)</option>
+            <option value="GEO (Geostationary Orbit)" <%= satellite.orbit_type === 'GEO (Geostationary Orbit)' ? 'selected' : '' %>>GEO (Geostationary Orbit)</option>
+            <option value="HEO (Highly Elliptical Orbit)" <%= satellite.orbit_type === 'HEO (Highly Elliptical Orbit)' ? 'selected' : '' %>>HEO (Highly Elliptical Orbit)</option>
+          </select>
+          <small class="form-help">Select the operational orbit zone of the spacecraft.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="launch_date"><i class="fa-solid fa-calendar-days"></i> Mission Launch Date</label>
+          <input type="date" id="launch_date" name="launch_date" value="<%= satellite.launch_date || '' %>" required>
+          <small class="form-help">Specify the official deployment launch date.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="status"><i class="fa-solid fa-signal"></i> Operational Status</label>
+          <select id="status" name="status" required>
+            <option value="Active" <%= satellite.status === 'Active' ? 'selected' : '' %>>Active (Telemetry Broadcasting)</option>
+            <option value="Inactive" <%= satellite.status === 'Inactive' ? 'selected' : '' %>>Inactive (Standby Mode)</option>
+            <option value="Maintenance" <%= satellite.status === 'Maintenance' ? 'selected' : '' %>>Maintenance (Diagnostics / Calibration)</option>
+          </select>
+          <small class="form-help">Set initial or updated state of the asset.</small>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> <%= isEdit ? 'Commit Configuration' : 'Deploy Registry' %>
+          </button>
+          <a href="/satellites" class="btn-secondary">Back to Registry</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../layout/footer') %>

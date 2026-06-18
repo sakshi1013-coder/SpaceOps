@@ -1,0 +1,81 @@
+<!-- Sidebar Navigation -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <i class="fa-solid fa-satellite-dish fa-spin-pulse"></i>
+    </div>
+    <div class="brand-name">
+      <span class="brand-text-main">Space</span><span class="brand-text-sub">Ops</span>
+    </div>
+  </div>
+
+  <div class="operator-profile">
+    <div class="avatar">
+      <i class="fa-solid fa-user-astronaut"></i>
+    </div>
+    <div class="profile-info">
+      <h4 class="operator-name"><%= user.name %></h4>
+      <span class="role-badge role-<%= user.role.toLowerCase() %>">
+        <i class="fa-solid fa-shield"></i> <%= user.role %>
+      </span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul>
+      <li class="<%= title.includes('Dashboard') ? 'active' : '' %>">
+        <a href="/dashboard">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="<%= title.includes('Satellite') ? 'active' : '' %>">
+        <a href="/satellites">
+          <i class="fa-solid fa-satellite"></i>
+          <span>Satellites</span>
+        </a>
+      </li>
+      <li class="<%= title.includes('Ground Station') ? 'active' : '' %>">
+        <a href="/stations">
+          <i class="fa-solid fa-tower-broadcast"></i>
+          <span>Ground Stations</span>
+        </a>
+      </li>
+      <li class="<%= title.includes('Telemetry') ? 'active' : '' %>">
+        <a href="/telemetry">
+          <i class="fa-solid fa-microchip"></i>
+          <span>Telemetry Logs</span>
+        </a>
+      </li>
+      <li class="<%= title.includes('Report') ? 'active' : '' %>">
+        <a href="/reports">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          <span>Operational Reports</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="/logout" class="btn-logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span>Terminate Session</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Top bar header for mobile toggle and notifications -->
+<header class="topbar">
+  <button class="sidebar-toggle" id="sidebarToggle">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+  <div class="topbar-title">
+    <h2><%= title %></h2>
+  </div>
+  <div class="system-time">
+    <i class="fa-solid fa-clock"></i> <span id="clock">UTC 00:00:00</span>
+  </div>
+</header>
+
+<main class="main-content">
+  <div class="content-wrapper">

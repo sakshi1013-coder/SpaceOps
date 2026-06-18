@@ -1,0 +1,61 @@
+<%- include('../layout/header') %>
+<%- include('../layout/sidebar') %>
+
+<div class="form-container">
+  <div class="console-box form-card">
+    <div class="card-glow"></div>
+    <div class="console-header">
+      <h3 class="console-title">
+        <i class="fa-solid <%= isEdit ? 'fa-pen-to-square' : 'fa-plus' %>"></i>
+        <%= isEdit ? `Modify Ground Site Config: ${station.station_name}` : 'Register New Ground Station' %>
+      </h3>
+      <a href="/stations" class="btn-secondary btn-sm">
+        <i class="fa-solid fa-arrow-left"></i> Cancel
+      </a>
+    </div>
+
+    <div class="console-body">
+      <% if (error) { %>
+        <div class="alert alert-danger" id="formAlert">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span><%= error %></span>
+          <button class="alert-close" onclick="document.getElementById('formAlert').remove()">&times;</button>
+        </div>
+      <% } %>
+
+      <form action="<%= isEdit ? `/stations/edit/${station.id}` : '/stations/create' %>" method="POST" id="stationForm" class="system-form">
+        
+        <div class="form-group">
+          <label for="station_name"><i class="fa-solid fa-broadcast-tower"></i> Station Location Name</label>
+          <input type="text" id="station_name" name="station_name" value="<%= station.station_name || '' %>" placeholder="e.g. Hartebeesthoek Substation, McMurdo Site-B" required maxlength="100">
+          <small class="form-help">Enter the official identity or nickname for the station facility.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="location"><i class="fa-solid fa-earth-americas"></i> Geographic Location / Coordinates</label>
+          <input type="text" id="location" name="location" value="<%= station.location || '' %>" placeholder="e.g. Ross Island, Antarctica, or Svalbard, Norway" required maxlength="255">
+          <small class="form-help">Provide location details (city, region, country or lat/long coordinates).</small>
+        </div>
+
+        <div class="form-group">
+          <label for="status"><i class="fa-solid fa-heartbeat"></i> Operational Status</label>
+          <select id="status" name="status" required>
+            <option value="Active" <%= station.status === 'Active' ? 'selected' : '' %>>Active (Online & Syncing)</option>
+            <option value="Inactive" <%= station.status === 'Inactive' ? 'selected' : '' %>>Inactive (Offline / Standby)</option>
+            <option value="Maintenance" <%= station.status === 'Maintenance' ? 'selected' : '' %>>Maintenance (Offline Diagnostics)</option>
+          </select>
+          <small class="form-help">Set the online status of the receiver antennas.</small>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> <%= isEdit ? 'Commit Configuration' : 'Establish Site Link' %>
+          </button>
+          <a href="/stations" class="btn-secondary">Back to Registry</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../layout/footer') %>

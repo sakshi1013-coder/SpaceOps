@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | SpaceOps Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="space-theme login-body">
+  
+  <div class="stars-overlay"></div>
+  <div class="nebula-overlay"></div>
+
+  <div class="login-wrapper">
+    <div class="login-header">
+      <div class="login-logo">
+        <i class="fa-solid fa-satellite-dish fa-spin-pulse"></i>
+      </div>
+      <h1>SpaceOps</h1>
+      <p class="subtitle">SATELLITE GROUND STATION MONITORING SYSTEM</p>
+    </div>
+
+    <div class="login-card">
+      <div class="card-glow"></div>
+      <h3 class="login-title"><i class="fa-solid fa-key"></i> Gateway Authentication</h3>
+      
+      <% if (error) { %>
+        <div class="alert alert-danger" id="loginAlert">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span><%= error %></span>
+          <button class="alert-close" onclick="document.getElementById('loginAlert').remove()">&times;</button>
+        </div>
+      <% } %>
+
+      <form action="/login" method="POST" class="auth-form" id="loginForm">
+        <div class="form-group">
+          <label for="email"><i class="fa-solid fa-envelope"></i> Operator Email</label>
+          <input type="email" id="email" name="email" placeholder="e.g. operator@spaceops.com" required autocomplete="email">
+        </div>
+        
+        <div class="form-group">
+          <label for="password"><i class="fa-solid fa-lock"></i> Security Cipher</label>
+          <input type="password" id="password" name="password" placeholder="Enter password" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn-primary btn-block">
+          <i class="fa-solid fa-unlock-keyhole"></i> Access Command Center
+        </button>
+      </form>
+
+      <div class="demo-credentials">
+        <h5><i class="fa-solid fa-info-circle"></i> Authorized Access Keyrings:</h5>
+        <ul>
+          <li><strong>Admin:</strong> <span>admin@spaceops.com</span> (password: <em>admin123</em>)</li>
+          <li><strong>Manager:</strong> <span>manager@spaceops.com</span> (password: <em>manager123</em>)</li>
+          <li><strong>Operator:</strong> <span>operator@spaceops.com</span> (password: <em>operator123</em>)</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="login-footer">
+      <p>&copy; 2026 SpaceOps Ground Station Portal. Classified Information.</p>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<%- include('layout/header') %>
+<%- include('layout/sidebar') %>
+
+<!-- Statistics Grid -->
+<section class="dashboard-grid">
+  <!-- Satellites Card -->
+  <div class="stat-card">
+    <div class="stat-card-icon card-blue">
+      <i class="fa-solid fa-satellite animate-pulse"></i>
+    </div>
+    <div class="stat-card-info">
+      <h3><%= stats.totalSatellites %></h3>
+      <p>Total Satellites</p>
+    </div>
+    <div class="stat-card-badge text-blue">
+      <%= stats.activeSatellites %> Active
+    </div>
+  </div>
+
+  <!-- Ground Stations Card -->
+  <div class="stat-card">
+    <div class="stat-card-icon card-purple">
+      <i class="fa-solid fa-tower-broadcast"></i>
+    </div>
+    <div class="stat-card-info">
+      <h3><%= stats.totalGroundStations %></h3>
+      <p>Ground Stations</p>
+    </div>
+    <div class="stat-card-badge text-purple">
+      <%= stats.activeGroundStations %> Active
+    </div>
+  </div>
+
+  <!-- Telemetry Logs Card -->
+  <div class="stat-card">
+    <div class="stat-card-icon card-cyan">
+      <i class="fa-solid fa-microchip"></i>
+    </div>
+    <div class="stat-card-info">
+      <h3><%= stats.totalTelemetryLogs %></h3>
+      <p>Telemetry Logs</p>
+    </div>
+    <div class="stat-card-badge text-cyan">
+      Live Signal Feed
+    </div>
+  </div>
+
+  <!-- Active Ratio Card -->
+  <div class="stat-card">
+    <div class="stat-card-icon card-green">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <div class="stat-card-info">
+      <h3>
+        <% if (stats.totalSatellites > 0) { %>
+          <%= Math.round((stats.activeSatellites / stats.totalSatellites) * 100) %>%
+        <% } else { %>
+          0%
+        <% } %>
+      </h3>
+      <p>Satellite Health Ratio</p>
+    </div>
+    <div class="stat-card-badge text-green">
+      Operational
+    </div>
+  </div>
+</section>
+
+<!-- Dashboard Main Columns -->
+<div class="dashboard-columns">
+  <!-- Recent Telemetry Logs Column -->
+  <div class="dashboard-col col-8">
+    <div class="console-box">
+      <div class="console-header">
+        <h3 class="console-title"><i class="fa-solid fa-wave-square"></i> Real-time Telemetry Feed</h3>
+        <a href="/telemetry" class="btn-console-link">View All Logs</a>
+      </div>
+      <div class="console-body">
+        <% if (recentLogs.length === 0) { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p>No telemetry logs recorded. Live feed inactive.</p>
+          </div>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Satellite Name</th>
+                  <th>Signal Strength</th>
+                  <th>Timestamp</th>
+                  <th>Notes Snippet</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% recentLogs.forEach(log => { %>
+                  <tr>
+                    <td class="text-glow"><%= log.satellite_name %></td>
+                    <td>
+                      <span class="signal-indicator <%= log.signal_strength >= -70 ? 'sig-good' : (log.signal_strength >= -85 ? 'sig-fair' : 'sig-poor') %>">
+                        <%= log.signal_strength %> dBm
+                      </span>
+                    </td>
+                    <td class="mono">
+                      <%= new Date(log.timestamp).toLocaleString() %>
+                    </td>
+                    <td class="notes-preview"><%= log.notes || 'No operational notes recorded.' %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Ground Stations Status -->
+  <div class="dashboard-col col-4">
+    <div class="console-box">
+      <div class="console-header">
+        <h3 class="console-title"><i class="fa-solid fa-location-crosshairs"></i> New Ground Sites</h3>
+        <a href="/stations" class="btn-console-link">View All</a>
+      </div>
+      <div class="console-body">
+        <% if (recentStations.length === 0) { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-map"></i>
+            <p>No ground stations registered.</p>
+          </div>
+        <% } else { %>
+          <ul class="stations-mini-list">
+            <% recentStations.forEach(station => { %>
+              <li>
+                <div class="station-mini-info">
+                  <strong><%= station.station_name %></strong>
+                  <span><%= station.location %></span>
+                </div>
+                <span class="status-indicator status-<%= station.status.toLowerCase() %>">
+                  <%= station.status %>
+                </span>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('layout/footer') %>
