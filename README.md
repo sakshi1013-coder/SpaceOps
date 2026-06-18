@@ -2,7 +2,18 @@
 
 SpaceOps is a centralized full-stack monitoring portal for orbital satellites, receiver ground station sites, and real-time telemetry log feeds. It is designed with Node.js/Express on the backend, MySQL on the database layer, and EJS-rendered responsive HTML5/CSS3 templates for the frontend interface.
 
+## Tech Stack
+
+- **Backend Runtime**: [Node.js](https://nodejs.org/) (v18+)
+- **Web Framework**: [Express.js](https://expressjs.com/) (v4.x)
+- **Database**: [MySQL](https://www.mysql.com/) (v8.0+)
+- **View Engine**: [EJS](https://ejs.co/) (Embedded JavaScript)
+- **Styling & UI**: Vanilla CSS3 (custom futuristic Space/Cyberpunk Dark Theme with glassmorphism, responsive navigation)
+- **Security & Authentication**: [bcryptjs](https://www.npmjs.com/package/bcryptjs) (password hashing), [express-session](https://www.npmjs.com/package/express-session) (session management)
+- **Configuration**: [dotenv](https://www.npmjs.com/package/dotenv) for environment variables
+
 ## System Features
+
 
 1. **Gatekeeper Authentication & Roles**:
    - Session-based operator authentication.
